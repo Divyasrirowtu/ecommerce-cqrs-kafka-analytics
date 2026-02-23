@@ -1,0 +1,18 @@
+# Java
+target/
+*.class
+*.log
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+
+# Docker
+*.pid
