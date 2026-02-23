@@ -41,3 +41,12 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+command-service:
+  build: ./command-service
+  container_name: command-service
+  ports:
+    - "8000:8000"
+  environment:
+    - KAFKA_BROKER=kafka:9092
+  depends_on:
+    - kafka
