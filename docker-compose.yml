@@ -50,3 +50,27 @@ command-service:
     - KAFKA_BROKER=kafka:9092
   depends_on:
     - kafka
+postgres:
+  image: postgres:15
+  container_name: postgres
+  environment:
+    POSTGRES_DB: orders_db
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
+  ports:
+    - "5432:5432"
+
+query-service:
+  build: ./query-service
+  container_name: query-service
+  ports:
+    - "8001:8001"
+  environment:
+    - KAFKA_BROKER=kafka:9092
+    - POSTGRES_HOST=postgres
+    - POSTGRES_DB=orders_db
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=postgres
+  depends_on:
+    - kafka
+    - postgres
