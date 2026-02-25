@@ -65,3 +65,13 @@ healthcheck:
   interval: 10s
   timeout: 5s
   retries: 5
+gateway:
+  image: nginx:latest
+  container_name: api-gateway
+  ports:
+    - "8080:80"
+  volumes:
+    - ./gateway/nginx.conf:/etc/nginx/nginx.conf
+  depends_on:
+    - command-service
+    - query-service
