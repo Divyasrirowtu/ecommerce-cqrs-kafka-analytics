@@ -75,3 +75,5 @@ gateway:
   depends_on:
     - command-service
     - query-service
+  env_file:
+  - .env
