@@ -40,6 +40,11 @@ services:
       - KAFKA_BROKER=kafka:9092
     depends_on:
       - kafka
+  healthcheck:
+  test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+  interval: 10s
+  timeout: 5s
+  retries: 5
 
   query-service:
     build: ./query-service
@@ -55,3 +60,8 @@ services:
     depends_on:
       - kafka
       - postgres
+healthcheck:
+  test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+  interval: 10s
+  timeout: 5s
+  retries: 5
