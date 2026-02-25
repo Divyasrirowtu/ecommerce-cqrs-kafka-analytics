@@ -3,3 +3,5 @@ uvicorn
 kafka-python
 pydantic
 prometheus-client
+python-jose
+passlib[bcrypt]

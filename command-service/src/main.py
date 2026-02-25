@@ -78,3 +78,21 @@ REQUEST_COUNT = Counter("command_requests_total", "Total command service request
 @app.get("/metrics")
 def metrics():
     return Response(generate_latest(), media_type="text/plain")
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from auth import create_access_token, verify_token
+
+security = HTTPBearer()
+
+@app.post("/login")
+def login():
+    token = create_access_token({"sub": "admin"})
+    return {"access_token": token}
+
+def auth_required(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    try:
+        verify_token(credentials.credentials)
+    except:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    @app.post("/create-order")
+def create_order(order: Order, credentials: HTTPAuthorizationCredentials = Depends(auth_required)):

@@ -3,3 +3,5 @@ uvicorn
 kafka-python
 psycopg2-binary
 pydantic
+python-jose
+passlib[bcrypt]
