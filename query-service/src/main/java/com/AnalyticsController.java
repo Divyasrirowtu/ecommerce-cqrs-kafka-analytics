@@ -1,5 +1,9 @@
 private final KTable<Windowed<String>, Double> lastFiveMinSales;
 
+@CrossOrigin(origins = "*")
+@RestController
+@RequestMapping("/analytics")
+
 public AnalyticsController(KTable<String, Double> totalSalesTable,
                            KTable<String, Double> productSalesTable,
                            KTable<String, String> topProductTable,
