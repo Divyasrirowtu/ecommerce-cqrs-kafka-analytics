@@ -30,3 +30,26 @@ public class KafkaStreamsAnalytics {
         return totalSales;
     }
 }
+@Bean
+public KTable<String, Double> productSalesTable(StreamsBuilder builder) {
+
+    KStream<String, Order> orderStream =
+            builder.stream("orders-topic",
+                    Consumed.with(Serdes.String(), new OrderSerde()));
+
+    KTable<String, Double> productSales =
+            orderStream
+                    .groupBy((key, order) -> order.getProduct(),
+                            Grouped.with(Serdes.String(), new OrderSerde()))
+                    .aggregate(
+                            () -> 0.0,
+                            (product, order, total) -> total + order.getAmount(),
+                            Materialized.with(Serdes.String(), Serdes.Double())
+                    );
+
+    productSales.toStream()
+            .to("product-sales-topic",
+                    Produced.with(Serdes.String(), Serdes.Double()));
+
+    return productSales;
+}

@@ -1,20 +1,23 @@
-package com.example.query;
-
-import org.apache.kafka.streams.kstream.KTable;
-import org.springframework.web.bind.annotation.*;
-
 @RestController
 @RequestMapping("/analytics")
 public class AnalyticsController {
 
     private final KTable<String, Double> totalSalesTable;
+    private final KTable<String, Double> productSalesTable;
 
-    public AnalyticsController(KTable<String, Double> totalSalesTable) {
+    public AnalyticsController(KTable<String, Double> totalSalesTable,
+                               KTable<String, Double> productSalesTable) {
         this.totalSalesTable = totalSalesTable;
+        this.productSalesTable = productSalesTable;
     }
 
     @GetMapping("/total-sales")
     public Double getTotalSales() {
         return totalSalesTable.get("total");
+    }
+
+    @GetMapping("/product-sales/{product}")
+    public Double getProductSales(@PathVariable String product) {
+        return productSalesTable.get(product);
     }
 }
