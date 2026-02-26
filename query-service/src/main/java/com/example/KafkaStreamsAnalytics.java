@@ -82,3 +82,20 @@ public KTable<String, String> topProductTable(StreamsBuilder builder) {
 
     return topProduct;
 }
+@Bean
+public KTable<Windowed<String>, Double> lastFiveMinSales(StreamsBuilder builder) {
+
+    KStream<String, Order> orderStream =
+            builder.stream("orders-topic",
+                    Consumed.with(Serdes.String(), new OrderSerde()));
+
+    KTable<Windowed<String>, Double> windowedSales =
+            orderStream
+                    .mapValues(Order::getAmount)
+                    .groupBy((key, value) -> "window",
+                            Grouped.with(Serdes.String(), Serdes.Double()))
+                    .windowedBy(TimeWindows.ofSizeWithNoGrace(Duration.ofMinutes(5)))
+                    .reduce(Double::sum);
+
+    return windowedSales;
+}
