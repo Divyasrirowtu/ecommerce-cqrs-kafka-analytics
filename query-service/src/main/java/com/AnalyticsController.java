@@ -1,23 +1,14 @@
-@RestController
-@RequestMapping("/analytics")
-public class AnalyticsController {
+private final KTable<String, String> topProductTable;
 
-    private final KTable<String, Double> totalSalesTable;
-    private final KTable<String, Double> productSalesTable;
+public AnalyticsController(KTable<String, Double> totalSalesTable,
+                           KTable<String, Double> productSalesTable,
+                           KTable<String, String> topProductTable) {
+    this.totalSalesTable = totalSalesTable;
+    this.productSalesTable = productSalesTable;
+    this.topProductTable = topProductTable;
+}
 
-    public AnalyticsController(KTable<String, Double> totalSalesTable,
-                               KTable<String, Double> productSalesTable) {
-        this.totalSalesTable = totalSalesTable;
-        this.productSalesTable = productSalesTable;
-    }
-
-    @GetMapping("/total-sales")
-    public Double getTotalSales() {
-        return totalSalesTable.get("total");
-    }
-
-    @GetMapping("/product-sales/{product}")
-    public Double getProductSales(@PathVariable String product) {
-        return productSalesTable.get(product);
-    }
+@GetMapping("/top-product")
+public String getTopProduct() {
+    return topProductTable.get("top");
 }

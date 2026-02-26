@@ -53,3 +53,32 @@ public KTable<String, Double> productSalesTable(StreamsBuilder builder) {
 
     return productSales;
 }
+@Bean
+public KTable<String, String> topProductTable(StreamsBuilder builder) {
+
+    KStream<String, Order> orderStream =
+            builder.stream("orders-topic",
+                    Consumed.with(Serdes.String(), new OrderSerde()));
+
+    KTable<String, Double> productSales =
+            orderStream
+                    .groupBy((key, order) -> order.getProduct(),
+                            Grouped.with(Serdes.String(), new OrderSerde()))
+                    .aggregate(
+                            () -> 0.0,
+                            (product, order, total) -> total + order.getAmount(),
+                            Materialized.with(Serdes.String(), Serdes.Double())
+                    );
+
+    KTable<String, String> topProduct =
+            productSales
+                    .toStream()
+                    .groupBy((product, total) -> "top")
+                    .reduce((product1, product2) ->
+                            productSales.get(product1) > productSales.get(product2)
+                                    ? product1
+                                    : product2
+                    );
+
+    return topProduct;
+}
